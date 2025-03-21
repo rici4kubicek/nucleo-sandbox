@@ -17,6 +17,7 @@ int main(void) {
     HAL_Init();
     SystemClock_Config();
     MX_GPIO_Init();
+#ifdef DEBUG
     MX_USART2_Init();
 
     char *intro;
@@ -29,6 +30,7 @@ int main(void) {
 
     snprintf(intro, 100, "v%d.%d.%d\r\n", SW_VERSION_MAJOR, SW_VERSION_MINOR, SW_VERSION_USER);
     UARTDebug_Write(intro, strlen(intro));
+#endif
 
     while (1) {
         HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
@@ -37,10 +39,14 @@ int main(void) {
 }
 
 static uint32_t UARTDebug_Write(const void *data, uint32_t size) {
+#ifdef DEBUG
     if (HAL_USART_Transmit(&husart2, (uint8_t *) data, size, 100) != HAL_OK) {
         return 0;
     }
     return size;
+#else
+    return 0;
+#endif
 }
 
 /**
@@ -84,6 +90,7 @@ static void SystemClock_Config(void) {
   * @retval None
   */
 static void MX_USART2_Init(void) {
+#ifdef DEBUG
     husart2.Instance = USART2;
     husart2.Init.BaudRate = 9600;
     husart2.Init.WordLength = USART_WORDLENGTH_8B;
@@ -96,7 +103,7 @@ static void MX_USART2_Init(void) {
     if (HAL_USART_Init(&husart2) != HAL_OK) {
         Error_Handler();
     }
-
+#endif
 }
 
 /**
