@@ -5,10 +5,15 @@ static void SystemClock_Config(void);
 
 static void MX_GPIO_Init(void);
 
+static void MX_USART2_Init(void);
+
+USART_HandleTypeDef husart2;
+
 int main(void) {
     HAL_Init();
     SystemClock_Config();
     MX_GPIO_Init();
+    MX_USART2_Init();
 
     while (1) {
         HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
@@ -49,6 +54,27 @@ static void SystemClock_Config(void) {
     if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK) {
         Error_Handler();
     }
+}
+
+/**
+  * @brief USART2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART2_Init(void) {
+    husart2.Instance = USART2;
+    husart2.Init.BaudRate = 9600;
+    husart2.Init.WordLength = USART_WORDLENGTH_8B;
+    husart2.Init.StopBits = USART_STOPBITS_1;
+    husart2.Init.Parity = USART_PARITY_NONE;
+    husart2.Init.Mode = USART_MODE_TX_RX;
+    husart2.Init.CLKPolarity = USART_POLARITY_LOW;
+    husart2.Init.CLKPhase = USART_PHASE_1EDGE;
+    husart2.Init.CLKLastBit = USART_LASTBIT_DISABLE;
+    if (HAL_USART_Init(&husart2) != HAL_OK) {
+        Error_Handler();
+    }
+
 }
 
 /**
