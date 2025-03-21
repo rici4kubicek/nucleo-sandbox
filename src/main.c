@@ -1,4 +1,6 @@
 #include <stm32f0xx_hal.h>
+#include <stdio.h>
+#include <string.h>
 #include "main.h"
 
 static void SystemClock_Config(void);
@@ -6,6 +8,8 @@ static void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 
 static void MX_USART2_Init(void);
+
+static uint32_t UARTDebug_Write(const void *data, uint32_t size);
 
 USART_HandleTypeDef husart2;
 
@@ -15,10 +19,28 @@ int main(void) {
     MX_GPIO_Init();
     MX_USART2_Init();
 
+    char *intro;
+
+    snprintf(intro, 100, "Nucleo Sandbox\r\n");
+    UARTDebug_Write(intro, strlen(intro));
+
+    snprintf(intro, 100, "---\r\n");
+    UARTDebug_Write(intro, strlen(intro));
+
+    snprintf(intro, 100, "v%d.%d.%d\r\n", SW_VERSION_MAJOR, SW_VERSION_MINOR, SW_VERSION_USER);
+    UARTDebug_Write(intro, strlen(intro));
+
     while (1) {
         HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
         HAL_Delay(1000);
     }
+}
+
+static uint32_t UARTDebug_Write(const void *data, uint32_t size) {
+    if (HAL_USART_Transmit(&husart2, (uint8_t *) data, size, 100) != HAL_OK) {
+        return 0;
+    }
+    return size;
 }
 
 /**
@@ -115,7 +137,6 @@ static void MX_GPIO_Init(void) {
     HAL_GPIO_Init(LD2_GPIO_Port, &GPIO_InitStruct);
 
 }
-
 
 /**
   * @brief  This function is executed in case of error occurrence.
