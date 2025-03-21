@@ -1,0 +1,58 @@
+name: PlatformIO flow
+
+on:
+  push:
+    branches:
+      - main
+      - 'feature/**'
+      - 'bug/**'
+      - '*'
+    tags:
+      - '*'
+  pull_request:
+    types:
+      - opened
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Cache pip
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    - name: Cache PlatformIO
+      uses: actions/cache@v4
+      with:
+        path: ~/.platformio
+        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    - name: Install PlatformIO
+      run: |
+        python -m pip install --upgrade pip
+        pip install --upgrade platformio
+    - name: Clean output folder
+      run: if [ -d "dist" ]; then rm -Rf dist; fi
+    - name: Run PlatformIO
+      run: |
+        pio run
+    - name: Use the Upload Artifact GitHub Action
+      uses: actions/upload-artifact@v4
+      with:
+        name: assets-for-download
+        path: dist/*
+    - name: Release
+      uses: softprops/action-gh-release@91409e712cf565ce9eff10c87a8d1b11b81757ae
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        # Identify if this is a pre release by checking if the tag name contains -rc, -b, -a
+        prerelease: ${{ contains(github.ref, '-rc') || contains(github.ref, '-b') || contains(github.ref, '-a') }}
+        files: dist/*
