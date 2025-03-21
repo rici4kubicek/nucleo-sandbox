@@ -158,3 +158,9 @@ fabric.properties
 
 .pio
 .vscode
+
+dist
+
+# python
+__pycache__
+*.pyc
