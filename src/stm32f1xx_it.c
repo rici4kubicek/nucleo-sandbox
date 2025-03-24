@@ -14,9 +14,9 @@
   *
   ******************************************************************************
   */
-#include <stm32f0xx_hal.h>
+#include <stm32f1xx_hal.h>
 #include "main.h"
-#include "stm32f0xx_it.h"
+#include "stm32f1xx_it.h"
 
 /******************************************************************************/
 /*           Cortex-M0 Processor Interruption and Exception Handlers          */

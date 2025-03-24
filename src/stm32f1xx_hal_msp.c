@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * @file         stm32f0xx_hal_msp.c
+  * @file         stm32f1xx_hal_msp.c
   * @brief        This file provides code for the MSP Initialization
   *               and de-Initialization codes.
   ******************************************************************************
@@ -15,7 +15,7 @@
   *
   ******************************************************************************
   */
-#include <stm32f0xx_hal.h>
+#include <stm32f1xx_hal.h>
 #include "main.h"
 
 /**
@@ -48,14 +48,6 @@ void HAL_USART_MspInit(USART_HandleTypeDef *husart) {
         GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
         GPIO_InitStruct.Pull = GPIO_NOPULL;
         GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-        GPIO_InitStruct.Alternate = GPIO_AF1_USART2;
-        HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-        GPIO_InitStruct.Pin = GPIO_PIN_4;
-        GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-        GPIO_InitStruct.Pull = GPIO_NOPULL;
-        GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-        GPIO_InitStruct.Alternate = GPIO_AF1_USART2;
         HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
     }
 
